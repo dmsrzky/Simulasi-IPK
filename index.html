@@ -5,6 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Simulasi IPK - Kalkulator & Target IPK Mahasiswa</title>
     
+    <!-- Meta Description & SEO -->
+    <meta name="description" content="Hitung proyeksi IPK kamu semester ini, atau cari tahu nilai minimal yang harus dikejar untuk mencapai target IPK.">
+
+    <!-- Open Graph / WhatsApp / Instagram / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://simulasi-ipk.vercel.app">
+    <meta property="og:title" content="Simulasi IPK — Hitung & Target IPK Mahasiswa">
+    <meta property="og:description" content="Hitung proyeksi IPK kamu semester ini, atau cari tahu nilai minimal yang harus dikejar untuk mencapai target IPK.">
+    <meta property="og:image" content="https://simulasi-ipk.vercel.app/og.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:locale" content="id_ID">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Simulasi IPK — Hitung & Target IPK Mahasiswa">
+    <meta name="twitter:description" content="Hitung proyeksi IPK kamu semester ini, atau cari tahu nilai minimal yang harus dikejar untuk mencapai target IPK.">
+    <meta name="twitter:image" content="https://simulasi-ipk.vercel.app/og.png">
+    
     <style>
         :root {
             /* Single Vibrant Accent & Monochromatic Palette */
@@ -485,6 +504,36 @@
             font-size: 0.85rem;
             font-weight: 600;
         }
+
+        .app-footer {
+            margin-top: 36px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .app-footer a {
+            color: var(--text-heading);
+            font-weight: 700;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+            transition: var(--transition);
+        }
+
+        .app-footer a:hover {
+            color: var(--accent);
+        }
+
+        .app-footer .sub-text {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            opacity: 0.75;
+        }
     </style>
 </head>
 <body>
@@ -501,7 +550,7 @@
         <header class="app-header">
             <span class="tag">Kalkulator Akademik</span>
             <h1>Simulasi IPK</h1>
-            <p>Hitung IPK & proyeksikan strategi nilai secara instant.</p>
+            <p>Hitung IPK & proyeksikan strategi nilai secara instan.</p>
         </header>
 
         <!-- Navigation Tabs -->
@@ -529,7 +578,7 @@
         <main id="modeHitung" class="tab-content active">
             
             <section class="card">
-                <div class="card-title">01 / Data Akademik Terakhir</div>
+                <div class="card-title">Data Akademik Terakhir</div>
                 <div class="grid-2">
                     <div class="form-group">
                         <label for="h_ipkLama">IPK Saat Ini</label>
@@ -545,7 +594,7 @@
             </section>
 
             <section class="card">
-                <div class="card-title">02 / Mata Kuliah Semester Ini</div>
+                <div class="card-title">Mata Kuliah Semester Ini</div>
                 <div id="matkulListContainer" class="matkul-list">
                     <!-- Dynamic course rows -->
                 </div>
@@ -595,7 +644,7 @@
         <main id="modeTarget" class="tab-content">
             
             <section class="card">
-                <div class="card-title">01 / Parameter Target</div>
+                <div class="card-title">Parameter Target</div>
                 
                 <div class="grid-2">
                     <div class="form-group">
@@ -654,6 +703,11 @@
             </section>
 
         </main>
+
+        <footer class="app-footer">
+            <p>Dibuat oleh <a href="https://www.dimasrahmandiansyah.app" target="_blank" rel="noopener noreferrer">Dimas Rahmandiansyah</a></p>
+            <p class="sub-text">Dibangun dengan Gemini Canvas</p>
+        </footer>
 
     </div>
 
