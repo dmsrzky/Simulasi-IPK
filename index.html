@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simulasi IPK - Kalkulator & Target IPK Mahasiswa</title>
+    <title>Simulasi IPK — Alat Bantu Keputusan Akademik Mahasiswa</title>
     
     <!-- Meta Description & SEO -->
-    <meta name="description" content="Hitung proyeksi IPK kamu semester ini, atau cari tahu nilai minimal yang harus dikejar untuk mencapai target IPK.">
+    <meta name="description" content="Simulasikan perbaikan nilai mengulang matkul, target IPK, dan estimasi nilai parsial untuk mengambil keputusan akademik terbaik.">
 
-    <!-- Open Graph / WhatsApp / Instagram / Facebook -->
+    <!-- Open Graph / Social Media -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://simulasi-ipk.vercel.app">
-    <meta property="og:title" content="Simulasi IPK — Hitung & Target IPK Mahasiswa">
-    <meta property="og:description" content="Hitung proyeksi IPK kamu semester ini, atau cari tahu nilai minimal yang harus dikejar untuk mencapai target IPK.">
+    <meta property="og:title" content="Simulasi IPK — Alat Bantu Keputusan Akademik Mahasiswa">
+    <meta property="og:description" content="Strategi perbaikan nilai, simulasi mengulang matkul, dan kalkulasi target IPK secara presisi.">
     <meta property="og:image" content="https://simulasi-ipk.vercel.app/og.png">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
@@ -20,13 +20,12 @@
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Simulasi IPK — Hitung & Target IPK Mahasiswa">
-    <meta name="twitter:description" content="Hitung proyeksi IPK kamu semester ini, atau cari tahu nilai minimal yang harus dikejar untuk mencapai target IPK.">
+    <meta name="twitter:title" content="Simulasi IPK — Alat Bantu Keputusan Akademik Mahasiswa">
+    <meta name="twitter:description" content="Strategi perbaikan nilai, simulasi mengulang matkul, dan kalkulasi target IPK secara presisi.">
     <meta name="twitter:image" content="https://simulasi-ipk.vercel.app/og.png">
-    
+
     <style>
         :root {
-            /* Single Vibrant Accent & Monochromatic Palette */
             --accent: #2563eb;
             --accent-hover: #1d4ed8;
             --accent-soft: #eff6ff;
@@ -37,18 +36,20 @@
             --text-main: #18181b;
             --text-muted: #71717a;
             --border: #e4e4e7;
-            --border-strong: #18181b;
+            --border-strong: #27272a;
             
-            /* Status Highlight Tones */
             --status-up: #16a34a;
             --status-up-bg: #f0fdf4;
             --status-down: #dc2626;
             --status-down-bg: #fef2f2;
+            --status-neutral: #d97706;
+            --status-neutral-bg: #fffbeb;
             
             --radius-lg: 16px;
             --radius-md: 10px;
             --radius-sm: 6px;
             --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 14px rgba(0,0,0,0.06);
             --transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
@@ -73,7 +74,7 @@
 
         .container {
             width: 100%;
-            max-width: 580px;
+            max-width: 1120px;
             margin: 0 auto;
             display: flex;
             flex-direction: column;
@@ -82,7 +83,7 @@
 
         .app-header {
             text-align: left;
-            padding: 8px 4px 12px 4px;
+            padding: 4px;
         }
 
         .app-header .tag {
@@ -113,20 +114,28 @@
             font-weight: 500;
         }
 
+        /* Nav Tabs */
         .tab-nav {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: repeat(3, 1fr);
             background: #e4e4e7;
             padding: 4px;
             border-radius: var(--radius-lg);
             gap: 4px;
+            max-width: 680px;
+        }
+
+        @media (max-width: 640px) {
+            .tab-nav {
+                grid-template-columns: 1fr;
+            }
         }
 
         .tab-btn {
-            padding: 12px;
+            padding: 12px 10px;
             border: none;
             background: transparent;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             font-weight: 800;
             letter-spacing: -0.01em;
             color: var(--text-muted);
@@ -136,13 +145,49 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 6px;
+            white-space: nowrap;
         }
 
         .tab-btn.active {
             background: var(--card-bg);
             color: var(--text-heading);
             box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Layout Grid */
+        .layout-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        @media (min-width: 1024px) {
+            .layout-grid {
+                display: grid;
+                grid-template-columns: 1fr 440px;
+                gap: 24px;
+                align-items: start;
+            }
+
+            .sticky-panel {
+                position: sticky;
+                top: 24px;
+            }
+        }
+
+        .input-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
         }
 
         .card {
@@ -153,16 +198,21 @@
             box-shadow: var(--shadow-sm);
         }
 
-        .card-title {
-            font-size: 0.8rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: var(--text-muted);
-            margin-bottom: 18px;
+        .card-header-row {
             display: flex;
             align-items: center;
-            gap: 8px;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .card-title {
+            font-size: 0.85rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
         }
 
         .grid-2 {
@@ -199,7 +249,7 @@
         .input-control {
             width: 100%;
             padding: 12px 14px;
-            font-size: 1rem;
+            font-size: 0.95rem;
             font-weight: 600;
             border: 1.5px solid var(--border);
             border-radius: var(--radius-md);
@@ -219,6 +269,34 @@
             background-color: var(--status-down-bg);
         }
 
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #fafafa;
+            padding: 12px 14px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border);
+            cursor: pointer;
+            margin-top: 4px;
+        }
+
+        .checkbox-container input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--accent);
+            cursor: pointer;
+        }
+
+        .checkbox-container label {
+            cursor: pointer;
+            text-transform: none;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-heading);
+            letter-spacing: normal;
+        }
+
         .error-hint {
             font-size: 0.75rem;
             font-weight: 600;
@@ -231,6 +309,7 @@
             display: block;
         }
 
+        /* Course Tables / List Rows */
         .matkul-list {
             display: flex;
             flex-direction: column;
@@ -238,9 +317,21 @@
             margin-bottom: 16px;
         }
 
-        .matkul-row {
+        .matkul-row-retake {
             display: grid;
-            grid-template-columns: 2fr 1fr 1.2fr 40px;
+            grid-template-columns: 2fr 0.9fr 1.1fr 1.1fr 40px;
+            gap: 8px;
+            align-items: center;
+            background: #fafafa;
+            padding: 10px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border);
+            animation: fadeIn 0.2s ease-out;
+        }
+
+        .matkul-row-partial {
+            display: grid;
+            grid-template-columns: 2fr 0.9fr 1.4fr 40px;
             gap: 8px;
             align-items: center;
             background: #fafafa;
@@ -255,12 +346,19 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        @media (max-width: 500px) {
-            .matkul-row {
+        @media (max-width: 600px) {
+            .matkul-row-retake {
                 grid-template-columns: 1fr 1fr 40px;
                 gap: 8px;
             }
-            .matkul-row .input-name {
+            .matkul-row-retake .input-name {
+                grid-column: 1 / -1;
+            }
+            .matkul-row-partial {
+                grid-template-columns: 1fr 1fr 40px;
+                gap: 8px;
+            }
+            .matkul-row-partial .input-name {
                 grid-column: 1 / -1;
             }
         }
@@ -306,6 +404,7 @@
             background: var(--accent-soft);
         }
 
+        /* Results Panel */
         .results-card {
             background: var(--card-bg);
             border: 2px solid var(--text-heading);
@@ -313,7 +412,7 @@
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            gap: 18px;
         }
 
         .results-card.up {
@@ -326,7 +425,7 @@
 
         .main-score-container {
             text-align: center;
-            padding: 16px 0 8px 0;
+            padding: 8px 0 4px 0;
         }
 
         .main-score-label {
@@ -338,13 +437,19 @@
         }
 
         .main-score-value {
-            font-size: 5rem;
+            font-size: 4.5rem;
             font-weight: 900;
             line-height: 0.95;
             letter-spacing: -0.05em;
             margin: 10px 0 14px 0;
             color: var(--text-heading);
             transition: var(--transition);
+        }
+
+        @media (min-width: 1024px) {
+            .main-score-value {
+                font-size: 5rem;
+            }
         }
 
         .badge-diff {
@@ -370,11 +475,31 @@
             color: var(--status-down);
         }
 
+        .recommendation-box {
+            background: var(--accent-soft);
+            border: 1.5px solid rgba(37, 99, 235, 0.25);
+            border-radius: var(--radius-md);
+            padding: 14px 16px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--accent-hover);
+            line-height: 1.45;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .recommendation-box.empty {
+            background: #fafafa;
+            border-color: var(--border);
+            color: var(--text-muted);
+        }
+
         .sub-scores {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 10px;
-            padding-top: 16px;
+            padding-top: 12px;
             border-top: 1px solid var(--border);
         }
 
@@ -395,10 +520,69 @@
         }
 
         .sub-score-box .value {
-            font-size: 1.6rem;
+            font-size: 1.5rem;
             font-weight: 900;
             letter-spacing: -0.03em;
             color: var(--text-heading);
+            margin-top: 2px;
+        }
+
+        /* Ranked retake list */
+        .rank-list-title {
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            letter-spacing: 0.08em;
+            margin-top: 4px;
+        }
+
+        .rank-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #fafafa;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 10px 12px;
+            font-size: 0.85rem;
+        }
+
+        .rank-item .item-left {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .rank-item .item-title {
+            font-weight: 800;
+            color: var(--text-heading);
+        }
+
+        .rank-item .item-sub {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .rank-item .item-right {
+            text-align: right;
+        }
+
+        .rank-item .item-gain {
+            font-weight: 900;
+            color: var(--status-up);
+
+        }
+
+        .rank-item .item-eff {
+            font-size: 0.7rem;
+            font-weight: 800;
+            color: var(--accent);
+            background: var(--accent-soft);
+            padding: 2px 6px;
+            border-radius: 4px;
+            display: inline-block;
             margin-top: 2px;
         }
 
@@ -407,7 +591,7 @@
             border-radius: var(--radius-md);
             background: #fafafa;
             border: 1px solid var(--border);
-            font-size: 0.925rem;
+            font-size: 0.9rem;
             color: var(--text-main);
             line-height: 1.5;
             display: flex;
@@ -425,13 +609,6 @@
             background: var(--status-down-bg);
             border-color: var(--status-down);
             color: #7f1d1d;
-        }
-
-        .icon-svg {
-            width: 20px;
-            height: 20px;
-            flex-shrink: 0;
-            margin-top: 2px;
         }
 
         .btn-copy {
@@ -461,6 +638,7 @@
             transform: scale(0.98);
         }
 
+        /* Toast & Footer */
         .toast {
             position: fixed;
             bottom: 24px;
@@ -485,16 +663,6 @@
         .toast.show {
             transform: translateX(-50%) translateY(0);
             opacity: 1;
-        }
-
-        .tab-content {
-            display: none;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .tab-content.active {
-            display: flex;
         }
 
         .empty-hint {
@@ -548,238 +716,395 @@
 
     <div class="container">
         <header class="app-header">
-            <span class="tag">Kalkulator Akademik</span>
+            <span class="tag">Keputusan Akademik</span>
             <h1>Simulasi IPK</h1>
-            <p>Hitung IPK & proyeksikan strategi nilai secara instan.</p>
+            <p>Alat ukur strategi perbaikan nilai, target IPK, & proyeksi kelulusan.</p>
         </header>
 
         <!-- Navigation Tabs -->
         <nav class="tab-nav">
-            <button class="tab-btn active" id="tab1Btn" onclick="switchTab('hitung')">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                    <rect x="4" y="2" width="16" height="20" rx="2"/>
-                    <line x1="8" y1="6" x2="16" y2="6"/>
-                    <line x1="16" y1="14" x2="16" y2="18"/>
-                    <path d="M16 10h.01"/><path d="M12 10h.01"/><path d="M8 10h.01"/>
-                    <path d="M12 14h.01"/><path d="M8 14h.01"/><path d="M12 18h.01"/><path d="M8 18h.01"/>
+            <button class="tab-btn active" id="tabRetakeBtn" onclick="switchTab('retake')">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
                 </svg>
-                Hitung IPK
+                Simulasi Mengulang
             </button>
-            <button class="tab-btn" id="tab2Btn" onclick="switchTab('target')">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <button class="tab-btn" id="tabTargetBtn" onclick="switchTab('target')">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                     <circle cx="12" cy="12" r="10"/>
                     <circle cx="12" cy="12" r="6"/>
                     <circle cx="12" cy="12" r="2"/>
                 </svg>
                 Target IPK
             </button>
+            <button class="tab-btn" id="tabPartialBtn" onclick="switchTab('partial')">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                </svg>
+                Estimasi Parsial
+            </button>
         </nav>
 
-        <main id="modeHitung" class="tab-content active">
-            
-            <section class="card">
-                <div class="card-title">Data Akademik Terakhir</div>
-                <div class="grid-2">
-                    <div class="form-group">
-                        <label for="h_ipkLama">IPK Saat Ini</label>
-                        <input type="number" id="h_ipkLama" class="input-control" placeholder="3.25" min="0" max="4" step="0.01" oninput="calculateHitung()">
-                        <span class="error-hint" id="h_ipkLama_err">IPK harus 0.00 - 4.00</span>
-                    </div>
-                    <div class="form-group">
-                        <label for="h_sksLama">Total SKS Lalu</label>
-                        <input type="number" id="h_sksLama" class="input-control" placeholder="72" min="1" step="1" oninput="calculateHitung()">
-                        <span class="error-hint" id="h_sksLama_err">SKS harus > 0</span>
-                    </div>
+        <main id="modeRetake" class="tab-content active">
+            <div class="layout-grid">
+                <!-- Left Input Stack -->
+                <div class="input-stack">
+                    <section class="card">
+                        <div class="card-title">Data Akademik Saat Ini</div>
+                        <div class="grid-2">
+                            <div class="form-group">
+                                <label for="r_ipkLama">IPK Saat Ini</label>
+                                <input type="number" id="r_ipkLama" class="input-control" placeholder="3.15" min="0" max="4" step="0.01" oninput="calculateRetake()">
+                                <span class="error-hint" id="r_ipkLama_err">IPK harus 0.00 - 4.00</span>
+                            </div>
+                            <div class="form-group">
+                                <label for="r_sksLama">Total SKS Lalu</label>
+                                <input type="number" id="r_sksLama" class="input-control" placeholder="84" min="1" step="1" oninput="calculateRetake()">
+                                <span class="error-hint" id="r_sksLama_err">SKS harus > 0</span>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 14px;">
+                            <div class="checkbox-container" onclick="toggleCapCheckbox(event)">
+                                <input type="checkbox" id="r_useCap" onchange="calculateRetake()">
+                                <label for="r_useCap">Kampus saya membatasi nilai maksimal mengulang</label>
+                            </div>
+                            <div id="capDropdownWrapper" class="form-group" style="display: none; margin-top: 10px;">
+                                <label for="r_maxCap">Batas Maksimal Nilai Mengulang</label>
+                                <select id="r_maxCap" class="input-control" onchange="calculateRetake()">
+                                    <option value="4.0">A (4.0)</option>
+                                    <option value="3.5" selected>AB / B+ (3.5)</option>
+                                    <option value="3.0">B (3.0)</option>
+                                    <option value="2.5">BC / C+ (2.5)</option>
+                                    <option value="2.0">C (2.0)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="card">
+                        <div class="card-header-row">
+                            <div class="card-title">Daftar Mata Kuliah Mengulang</div>
+                        </div>
+
+                        <div id="retakeListContainer" class="matkul-list">
+                            <!-- Dynamic rows -->
+                        </div>
+
+                        <button class="btn-add" onclick="addRetakeRow()">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                <line x1="12" y1="5" x2="12" y2="19"/>
+                                <line x1="5" y1="12" x2="19" y2="12"/>
+                            </svg>
+                            Tambah Matkul Mengulang
+                        </button>
+                    </section>
                 </div>
-            </section>
 
-            <section class="card">
-                <div class="card-title">Mata Kuliah Semester Ini</div>
-                <div id="matkulListContainer" class="matkul-list">
-                    <!-- Dynamic course rows -->
+                <!-- Right Sticky Results Panel -->
+                <div class="sticky-panel">
+                    <section id="r_resultCard" class="card results-card">
+                        <div class="main-score-container">
+                            <div class="main-score-label">Proyeksi IPK Setelah Diulang</div>
+                            <div class="main-score-value" id="r_resIpk">0.00</div>
+                            <div>
+                                <span class="badge-diff" id="r_resBadge">
+                                    <span>Isi data mengulang</span>
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Smart Recommendation Box -->
+                        <div id="r_recBox" class="recommendation-box empty">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="flex-shrink:0;">
+                                <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
+                            </svg>
+                            <span id="r_recText">Masukkan data IPK dan daftar matkul untuk mendapatkan rekomendasi urutan mengulang paling efisien.</span>
+                        </div>
+
+                        <!-- Efficiency Ranking -->
+                        <div>
+                            <div class="rank-list-title">Peringkat Efisiensi Mengulang</div>
+                            <div id="r_rankContainer" style="display: flex; flex-direction: column; gap: 8px; margin-top: 8px;">
+                                <div class="empty-hint">Belum ada data mengulang.</div>
+                            </div>
+                        </div>
+
+                        <button class="btn-copy" onclick="copySummary('retake')">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                            </svg>
+                            Salin Strategi Mengulang
+                        </button>
+                    </section>
                 </div>
-
-                <button class="btn-add" onclick="addCourseRow()">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                        <line x1="12" y1="5" x2="12" y2="19"/>
-                        <line x1="5" y1="12" x2="19" y2="12"/>
-                    </svg>
-                    Tambah Mata Kuliah
-                </button>
-            </section>
-
-            <section id="h_resultCard" class="card results-card">
-                <div class="main-score-container">
-                    <div class="main-score-label">Proyeksi IPK Kumulatif</div>
-                    <div class="main-score-value" id="h_resIpk">0.00</div>
-                    <div>
-                        <span class="badge-diff" id="h_resBadge">
-                            <span>Isi data akademik</span>
-                        </span>
-                    </div>
-                </div>
-
-                <div class="sub-scores">
-                    <div class="sub-score-box">
-                        <div class="label">IP Semester</div>
-                        <div class="value" id="h_resIps">--</div>
-                    </div>
-                    <div class="sub-score-box">
-                        <div class="label">SKS Baru</div>
-                        <div class="value" id="h_resSks">--</div>
-                    </div>
-                </div>
-
-                <button class="btn-copy" onclick="copySummary('hitung')">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                    </svg>
-                    Salin Ringkasan Hasil
-                </button>
-            </section>
-
+            </div>
         </main>
 
         <main id="modeTarget" class="tab-content">
-            
-            <section class="card">
-                <div class="card-title">Parameter Target</div>
-                
-                <div class="grid-2">
-                    <div class="form-group">
-                        <label for="t_ipkLama">IPK Saat Ini</label>
-                        <input type="number" id="t_ipkLama" class="input-control" placeholder="3.10" min="0" max="4" step="0.01" oninput="calculateTarget()">
-                        <span class="error-hint" id="t_ipkLama_err">IPK 0.00 - 4.00</span>
-                    </div>
-                    <div class="form-group">
-                        <label for="t_sksLama">Total SKS Lalu</label>
-                        <input type="number" id="t_sksLama" class="input-control" placeholder="60" min="1" step="1" oninput="calculateTarget()">
-                        <span class="error-hint" id="t_sksLama_err">SKS > 0</span>
-                    </div>
+            <div class="layout-grid">
+                <div class="input-stack">
+                    <section class="card">
+                        <div class="card-title">Parameter Target IPK</div>
+                        
+                        <div class="grid-2">
+                            <div class="form-group">
+                                <label for="t_ipkLama">IPK Saat Ini</label>
+                                <input type="number" id="t_ipkLama" class="input-control" placeholder="3.10" min="0" max="4" step="0.01" oninput="calculateTarget()">
+                                <span class="error-hint" id="t_ipkLama_err">IPK 0.00 - 4.00</span>
+                            </div>
+                            <div class="form-group">
+                                <label for="t_sksLama">Total SKS Lalu</label>
+                                <input type="number" id="t_sksLama" class="input-control" placeholder="60" min="1" step="1" oninput="calculateTarget()">
+                                <span class="error-hint" id="t_sksLama_err">SKS > 0</span>
+                            </div>
+                        </div>
+
+                        <div class="grid-2" style="margin-top: 10px;">
+                            <div class="form-group">
+                                <label for="t_sksBaru">SKS Semester Ini</label>
+                                <input type="number" id="t_sksBaru" class="input-control" placeholder="20" min="1" step="1" oninput="calculateTarget()">
+                                <span class="error-hint" id="t_sksBaru_err">SKS > 0</span>
+                            </div>
+                            <div class="form-group">
+                                <label for="t_ipkTarget">Target IPK Impian</label>
+                                <input type="number" id="t_ipkTarget" class="input-control" placeholder="3.50" min="0" max="4" step="0.01" oninput="calculateTarget()">
+                                <span class="error-hint" id="t_ipkTarget_err">Target 0.00 - 4.00</span>
+                            </div>
+                        </div>
+                    </section>
                 </div>
 
-                <div class="grid-2" style="margin-top: 10px;">
-                    <div class="form-group">
-                        <label for="t_sksBaru">SKS Semester Ini</label>
-                        <input type="number" id="t_sksBaru" class="input-control" placeholder="20" min="1" step="1" oninput="calculateTarget()">
-                        <span class="error-hint" id="t_sksBaru_err">SKS > 0</span>
-                    </div>
-                    <div class="form-group">
-                        <label for="t_ipkTarget">Target IPK Impian</label>
-                        <input type="number" id="t_ipkTarget" class="input-control" placeholder="3.50" min="0" max="4" step="0.01" oninput="calculateTarget()">
-                        <span class="error-hint" id="t_ipkTarget_err">Target 0.00 - 4.00</span>
-                    </div>
+                <div class="sticky-panel">
+                    <section id="t_resultCard" class="card results-card">
+                        <div class="main-score-container">
+                            <div class="main-score-label">Minimal IP Semester Ini</div>
+                            <div class="main-score-value" id="t_resIpMin">0.00</div>
+                            <div>
+                                <span class="badge-diff" id="t_resBadge">
+                                    <span>Isi parameter target</span>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div id="t_adviceBox" class="target-advice-box">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="flex-shrink:0;">
+                                <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
+                            </svg>
+                            <span id="t_adviceText">Silakan masukkan data IPK saat ini, SKS tempuh, SKS baru, dan target IPK kamu.</span>
+                        </div>
+
+                        <button class="btn-copy" onclick="copySummary('target')">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                            </svg>
+                            Salin Ringkasan Target
+                        </button>
+                    </section>
                 </div>
-            </section>
+            </div>
+        </main>
 
-            <section id="t_resultCard" class="card results-card">
-                <div class="main-score-container">
-                    <div class="main-score-label">Minimal IP Semester Ini</div>
-                    <div class="main-score-value" id="t_resIpMin">0.00</div>
-                    <div>
-                        <span class="badge-diff" id="t_resBadge">
-                            <span>Isi parameter target</span>
-                        </span>
-                    </div>
+        <main id="modePartial" class="tab-content">
+            <div class="layout-grid">
+                <div class="input-stack">
+                    <section class="card">
+                        <div class="card-title">Data Akademik Saat Ini</div>
+                        <div class="grid-2">
+                            <div class="form-group">
+                                <label for="p_ipkLama">IPK Saat Ini</label>
+                                <input type="number" id="p_ipkLama" class="input-control" placeholder="3.20" min="0" max="4" step="0.01" oninput="calculatePartial()">
+                                <span class="error-hint" id="p_ipkLama_err">IPK 0.00 - 4.00</span>
+                            </div>
+                            <div class="form-group">
+                                <label for="p_sksLama">Total SKS Lalu</label>
+                                <input type="number" id="p_sksLama" class="input-control" placeholder="70" min="1" step="1" oninput="calculatePartial()">
+                                <span class="error-hint" id="p_sksLama_err">SKS > 0</span>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="card">
+                        <div class="card-header-row">
+                            <div class="card-title">Mata Kuliah Semester Ini (Nilai Keluar / Perkiraan)</div>
+                        </div>
+
+                        <div id="partialListContainer" class="matkul-list">
+                            <!-- Dynamic partial rows -->
+                        </div>
+
+                        <button class="btn-add" onclick="addPartialRow()">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                <line x1="12" y1="5" x2="12" y2="19"/>
+                                <line x1="5" y1="12" x2="19" y2="12"/>
+                            </svg>
+                            Tambah Mata Kuliah
+                        </button>
+                    </section>
                 </div>
 
-                <div id="t_adviceBox" class="target-advice-box">
-                    <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                        <circle cx="12" cy="12" r="10"/>
-                        <line x1="12" y1="16" x2="12" y2="12"/>
-                        <line x1="12" y1="8" x2="12.01" y2="8"/>
-                    </svg>
-                    <span id="t_adviceText">Silakan masukkan data IPK saat ini, SKS tempuh, SKS baru, dan target IPK kamu.</span>
+                <div class="sticky-panel">
+                    <section id="p_resultCard" class="card results-card">
+                        <div class="main-score-container">
+                            <div class="main-score-label">Proyeksi IPK Kumulatif</div>
+                            <div class="main-score-value" id="p_resIpk">0.00</div>
+                            <div>
+                                <span class="badge-diff" id="p_resBadge">
+                                    <span>Isi data matkul</span>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="sub-scores">
+                            <div class="sub-score-box">
+                                <div class="label">IP Semester (Perkiraan)</div>
+                                <div class="value" id="p_resIps">--</div>
+                            </div>
+                            <div class="sub-score-box">
+                                <div class="label">SKS Semester Ini</div>
+                                <div class="value" id="p_resSks">--</div>
+                            </div>
+                        </div>
+
+                        <button class="btn-copy" onclick="copySummary('partial')">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                            </svg>
+                            Salin Ringkasan Parsial
+                        </button>
+                    </section>
                 </div>
-
-                <button class="btn-copy" onclick="copySummary('target')">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                    </svg>
-                    Salin Ringkasan Target
-                </button>
-            </section>
-
+            </div>
         </main>
 
         <footer class="app-footer">
             <p>Dibuat oleh <a href="https://www.dimasrahmandiansyah.app" target="_blank" rel="noopener noreferrer">Dimas Rahmandiansyah</a></p>
             <p class="sub-text">Dibangun dengan Gemini Canvas</p>
         </footer>
-
     </div>
 
     <script>
-        let courses = [
-            { id: 1, name: 'Mata Kuliah 1', sks: 3, grade: 4.0 },
-            { id: 2, name: 'Mata Kuliah 2', sks: 3, grade: 3.5 },
-            { id: 3, name: 'Mata Kuliah 3', sks: 2, grade: 3.0 }
+        // State for Retake courses
+        let retakeCourses = [
+            { id: 1, name: 'Algoritma & Pemrograman', sks: 3, oldGrade: 1.0, targetGrade: 4.0 },
+            { id: 2, name: 'Matematika Diskrit', sks: 4, oldGrade: 2.0, targetGrade: 3.5 },
+            { id: 3, name: 'Struktur Data', sks: 3, oldGrade: 2.5, targetGrade: 4.0 }
         ];
-        let nextCourseId = 4;
+        let nextRetakeId = 4;
+
+        // State for Partial courses
+        let partialCourses = [
+            { id: 1, name: 'Metode Penelitian', sks: 3, grade: 3.5 },
+            { id: 2, name: 'Kecerdasan Buatan', sks: 3, grade: 4.0 },
+            { id: 3, name: 'Sistem Terdistribusi', sks: 3, grade: 3.0 }
+        ];
+        let nextPartialId = 4;
 
         window.onload = function() {
-            renderCourseRows();
-            calculateHitung();
+            renderRetakeRows();
+            renderPartialRows();
+            calculateRetake();
             calculateTarget();
+            calculatePartial();
         };
 
         function switchTab(mode) {
-            const btnHitung = document.getElementById('tab1Btn');
-            const btnTarget = document.getElementById('tab2Btn');
-            const viewHitung = document.getElementById('modeHitung');
-            const viewTarget = document.getElementById('modeTarget');
+            const tabRetake = document.getElementById('tabRetakeBtn');
+            const tabTarget = document.getElementById('tabTargetBtn');
+            const tabPartial = document.getElementById('tabPartialBtn');
 
-            if (mode === 'hitung') {
-                btnHitung.classList.add('active');
-                btnTarget.classList.remove('active');
-                viewHitung.classList.add('active');
-                viewTarget.classList.remove('active');
-            } else {
-                btnTarget.classList.add('active');
-                btnHitung.classList.remove('active');
-                viewTarget.classList.add('active');
-                viewHitung.classList.remove('active');
+            const modeRetake = document.getElementById('modeRetake');
+            const modeTarget = document.getElementById('modeTarget');
+            const modePartial = document.getElementById('modePartial');
+
+            [tabRetake, tabTarget, tabPartial].forEach(b => b.classList.remove('active'));
+            [modeRetake, modeTarget, modePartial].forEach(m => m.classList.remove('active'));
+
+            if (mode === 'retake') {
+                tabRetake.classList.add('active');
+                modeRetake.classList.add('active');
+            } else if (mode === 'target') {
+                tabTarget.classList.add('active');
+                modeTarget.classList.add('active');
+            } else if (mode === 'partial') {
+                tabPartial.classList.add('active');
+                modePartial.classList.add('active');
             }
         }
 
-        function renderCourseRows() {
-            const container = document.getElementById('matkulListContainer');
-            if (courses.length === 0) {
-                container.innerHTML = `<div class="empty-hint">Belum ada mata kuliah. Klik tombol "+ Tambah Mata Kuliah".</div>`;
+        function toggleCapCheckbox(e) {
+            if (e.target.tagName !== 'INPUT') {
+                const cb = document.getElementById('r_useCap');
+                cb.checked = !cb.checked;
+            }
+            const wrapper = document.getElementById('capDropdownWrapper');
+            const cb = document.getElementById('r_useCap');
+            wrapper.style.display = cb.checked ? 'block' : 'none';
+            calculateRetake();
+        }
+
+        function renderRetakeRows() {
+            const container = document.getElementById('retakeListContainer');
+            if (retakeCourses.length === 0) {
+                container.innerHTML = `<div class="empty-hint">Belum ada mata kuliah mengulang. Klik "+ Tambah Matkul Mengulang".</div>`;
                 return;
             }
 
-            container.innerHTML = courses.map(course => `
-                <div class="matkul-row" id="row-${course.id}">
-                    <input type="text" 
-                           class="input-control input-name" 
-                           placeholder="Nama Matkul" 
-                           value="${escapeHtml(course.name)}"
-                           oninput="updateCourse(${course.id}, 'name', this.value)">
-                    
-                    <input type="number" 
-                           class="input-control" 
-                           placeholder="SKS" 
-                           value="${course.sks !== null ? course.sks : ''}" 
-                           min="1" max="10"
-                           oninput="updateCourse(${course.id}, 'sks', this.value)">
-                    
-                    <select class="input-control" onchange="updateCourse(${course.id}, 'grade', this.value)">
-                        <option value="4" ${course.grade === 4.0 ? 'selected' : ''}>A (4.0)</option>
-                        <option value="3.5" ${course.grade === 3.5 ? 'selected' : ''}>AB (3.5)</option>
-                        <option value="3" ${course.grade === 3.0 ? 'selected' : ''}>B (3.0)</option>
-                        <option value="2.5" ${course.grade === 2.5 ? 'selected' : ''}>BC (2.5)</option>
-                        <option value="2" ${course.grade === 2.0 ? 'selected' : ''}>C (2.0)</option>
-                        <option value="1" ${course.grade === 1.0 ? 'selected' : ''}>D (1.0)</option>
-                        <option value="0" ${course.grade === 0.0 ? 'selected' : ''}>E (0.0)</option>
+            container.innerHTML = retakeCourses.map(course => `
+                <div class="matkul-row-retake" id="retake-row-${course.id}">
+                    <input type="text" class="input-control input-name" placeholder="Nama Matkul" value="${escapeHtml(course.name)}" oninput="updateRetakeCourse(${course.id}, 'name', this.value)">
+                    <input type="number" class="input-control" placeholder="SKS" value="${course.sks || ''}" min="1" max="10" oninput="updateRetakeCourse(${course.id}, 'sks', this.value)">
+                    <select class="input-control" onchange="updateRetakeCourse(${course.id}, 'oldGrade', this.value)">
+                        <option value="4.0" ${course.oldGrade === 4.0 ? 'selected' : ''}>A (4.0)</option>
+                        <option value="3.5" ${course.oldGrade === 3.5 ? 'selected' : ''}>AB (3.5)</option>
+                        <option value="3.0" ${course.oldGrade === 3.0 ? 'selected' : ''}>B (3.0)</option>
+                        <option value="2.5" ${course.oldGrade === 2.5 ? 'selected' : ''}>BC (2.5)</option>
+                        <option value="2.0" ${course.oldGrade === 2.0 ? 'selected' : ''}>C (2.0)</option>
+                        <option value="1.0" ${course.oldGrade === 1.0 ? 'selected' : ''}>D (1.0)</option>
+                        <option value="0.0" ${course.oldGrade === 0.0 ? 'selected' : ''}>E (0.0)</option>
                     </select>
-
-                    <button class="btn-delete" title="Hapus" onclick="removeCourseRow(${course.id})">
+                    <select class="input-control" onchange="updateRetakeCourse(${course.id}, 'targetGrade', this.value)">
+                        <option value="4.0" ${course.targetGrade === 4.0 ? 'selected' : ''}>A (4.0)</option>
+                        <option value="3.5" ${course.targetGrade === 3.5 ? 'selected' : ''}>AB (3.5)</option>
+                        <option value="3.0" ${course.targetGrade === 3.0 ? 'selected' : ''}>B (3.0)</option>
+                        <option value="2.5" ${course.targetGrade === 2.5 ? 'selected' : ''}>BC (2.5)</option>
+                        <option value="2.0" ${course.targetGrade === 2.0 ? 'selected' : ''}>C (2.0)</option>
+                    </select>
+                    <button class="btn-delete" title="Hapus" onclick="removeRetakeRow(${course.id})">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                            <line x1="18" y1="6" x2="6" y2="18"/>
-                            <line x1="6" y1="6" x2="18" y2="18"/>
+                            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                        </svg>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function renderPartialRows() {
+            const container = document.getElementById('partialListContainer');
+            if (partialCourses.length === 0) {
+                container.innerHTML = `<div class="empty-hint">Belum ada mata kuliah. Klik "+ Tambah Mata Kuliah".</div>`;
+                return;
+            }
+
+            container.innerHTML = partialCourses.map(course => `
+                <div class="matkul-row-partial" id="partial-row-${course.id}">
+                    <input type="text" class="input-control input-name" placeholder="Nama Matkul" value="${escapeHtml(course.name)}" oninput="updatePartialCourse(${course.id}, 'name', this.value)">
+                    <input type="number" class="input-control" placeholder="SKS" value="${course.sks || ''}" min="1" max="10" oninput="updatePartialCourse(${course.id}, 'sks', this.value)">
+                    <select class="input-control" onchange="updatePartialCourse(${course.id}, 'grade', this.value)">
+                        <option value="4.0" ${course.grade === 4.0 ? 'selected' : ''}>A (4.0)</option>
+                        <option value="3.5" ${course.grade === 3.5 ? 'selected' : ''}>AB (3.5)</option>
+                        <option value="3.0" ${course.grade === 3.0 ? 'selected' : ''}>B (3.0)</option>
+                        <option value="2.5" ${course.grade === 2.5 ? 'selected' : ''}>BC (2.5)</option>
+                        <option value="2.0" ${course.grade === 2.0 ? 'selected' : ''}>C (2.0)</option>
+                        <option value="1.0" ${course.grade === 1.0 ? 'selected' : ''}>D (1.0)</option>
+                        <option value="0.0" ${course.grade === 0.0 ? 'selected' : ''}>E (0.0)</option>
+                    </select>
+                    <button class="btn-delete" title="Hapus" onclick="removePartialRow(${course.id})">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
                         </svg>
                     </button>
                 </div>
@@ -790,37 +1115,68 @@
             return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
         }
 
-        function addCourseRow() {
-            courses.push({
-                id: nextCourseId++,
-                name: `Mata Kuliah ${courses.length + 1}`,
+        function addRetakeRow() {
+            retakeCourses.push({
+                id: nextRetakeId++,
+                name: `Matkul Perbaikan ${retakeCourses.length + 1}`,
                 sks: 3,
-                grade: 4.0
+                oldGrade: 2.0,
+                targetGrade: 4.0
             });
-            renderCourseRows();
-            calculateHitung();
+            renderRetakeRows();
+            calculateRetake();
         }
 
-        function removeCourseRow(id) {
-            courses = courses.filter(c => c.id !== id);
-            renderCourseRows();
-            calculateHitung();
+        function removeRetakeRow(id) {
+            retakeCourses = retakeCourses.filter(c => c.id !== id);
+            renderRetakeRows();
+            calculateRetake();
         }
 
-        function updateCourse(id, field, value) {
-            const course = courses.find(c => c.id === id);
+        function updateRetakeCourse(id, field, value) {
+            const course = retakeCourses.find(c => c.id === id);
             if (!course) return;
 
-            if (field === 'name') {
-                course.name = value;
-            } else if (field === 'sks') {
+            if (field === 'name') course.name = value;
+            else if (field === 'sks') {
                 const parsed = parseInt(value, 10);
                 course.sks = isNaN(parsed) || parsed < 1 ? 0 : parsed;
-            } else if (field === 'grade') {
-                course.grade = parseFloat(value);
             }
+            else if (field === 'oldGrade') course.oldGrade = parseFloat(value);
+            else if (field === 'targetGrade') course.targetGrade = parseFloat(value);
 
-            calculateHitung();
+            calculateRetake();
+        }
+
+        function addPartialRow() {
+            partialCourses.push({
+                id: nextPartialId++,
+                name: `Mata Kuliah ${partialCourses.length + 1}`,
+                sks: 3,
+                grade: 3.5
+            });
+            renderPartialRows();
+            calculatePartial();
+        }
+
+        function removePartialRow(id) {
+            partialCourses = partialCourses.filter(c => c.id !== id);
+            renderPartialRows();
+            calculatePartial();
+        }
+
+        function updatePartialCourse(id, field, value) {
+            const course = partialCourses.find(c => c.id === id);
+            if (!course) return;
+
+            if (field === 'name') course.name = value;
+            else if (field === 'sks') {
+                const parsed = parseInt(value, 10);
+                course.sks = isNaN(parsed) || parsed < 1 ? 0 : parsed;
+            }
+            else if (field === 'grade') course.grade = parseFloat(value);
+
+            calculatePartial();
         }
 
         function validateInput(id, errId, min, max) {
@@ -845,74 +1201,109 @@
             return val;
         }
 
-        function calculateHitung() {
-            const ipkLama = validateInput('h_ipkLama', 'h_ipkLama_err', 0, 4);
-            const sksLama = validateInput('h_sksLama', 'h_sksLama_err', 1);
+        function calculateRetake() {
+            const ipkLama = validateInput('r_ipkLama', 'r_ipkLama_err', 0, 4);
+            const sksLama = validateInput('r_sksLama', 'r_sksLama_err', 1);
 
-            const resIpk = document.getElementById('h_resIpk');
-            const resIps = document.getElementById('h_resIps');
-            const resSks = document.getElementById('h_resSks');
-            const resBadge = document.getElementById('h_resBadge');
-            const resCard = document.getElementById('h_resultCard');
+            const resIpk = document.getElementById('r_resIpk');
+            const resBadge = document.getElementById('r_resBadge');
+            const resCard = document.getElementById('r_resultCard');
+            const recBox = document.getElementById('r_recBox');
+            const recText = document.getElementById('r_recText');
+            const rankContainer = document.getElementById('r_rankContainer');
 
-            let totalSksBaru = 0;
-            let totalBobotBaru = 0;
-            let validCoursesCount = 0;
+            const useCap = document.getElementById('r_useCap').checked;
+            const maxCap = parseFloat(document.getElementById('r_maxCap').value);
 
-            courses.forEach(c => {
-                if (c.sks && c.sks > 0) {
-                    totalSksBaru += c.sks;
-                    totalBobotBaru += (c.sks * c.grade);
-                    validCoursesCount++;
-                }
-            });
-
-            if (totalSksBaru === 0 || validCoursesCount === 0) {
-                resIps.textContent = '--';
-                resSks.textContent = '--';
-            } else {
-                const ips = totalBobotBaru / totalSksBaru;
-                resIps.textContent = ips.toFixed(2);
-                resSks.textContent = totalSksBaru;
-            }
-
-            if (ipkLama === null || sksLama === null || totalSksBaru === 0) {
+            if (ipkLama === null || sksLama === null) {
                 resIpk.textContent = '0.00';
                 resBadge.className = 'badge-diff';
                 resBadge.innerHTML = '<span>Isi data akademik</span>';
                 resCard.className = 'card results-card';
+                recBox.className = 'recommendation-box empty';
+                recText.textContent = 'Masukkan data IPK dan total SKS untuk mengaktifkan analisis strategi mengulang.';
+                rankContainer.innerHTML = '<div class="empty-hint">Lengkapi data IPK & SKS.</div>';
                 return;
             }
 
-            const totalSksKumulatif = sksLama + totalSksBaru;
-            const ipkBaru = ((ipkLama * sksLama) + totalBobotBaru) / totalSksKumulatif;
-            const diff = ipkBaru - ipkLama;
+            let totalMutuLama = ipkLama * sksLama;
+            let totalMutuBaru = totalMutuLama;
+
+            let analyzedCourses = [];
+
+            retakeCourses.forEach(c => {
+                if (c.sks && c.sks > 0) {
+                    let targetGradeEffective = c.targetGrade;
+                    if (useCap && targetGradeEffective > maxCap) {
+                        targetGradeEffective = maxCap;
+                    }
+
+                    const gradeDelta = targetGradeEffective - c.oldGrade;
+                    const mutuGain = c.sks * gradeDelta;
+                    const ipkGain = mutuGain / sksLama;
+                    const efficiency = gradeDelta > 0 ? ipkGain / c.sks : 0;
+
+                    if (gradeDelta > 0) {
+                        totalMutuBaru += mutuGain;
+                    }
+
+                    analyzedCourses.push({
+                        name: c.name || 'Matkul Tanpa Nama',
+                        sks: c.sks,
+                        oldGrade: c.oldGrade,
+                        targetGradeEffective: targetGradeEffective,
+                        ipkGain: ipkGain,
+                        efficiency: efficiency,
+                        isValidGain: gradeDelta > 0
+                    });
+                }
+            });
+
+            const ipkBaru = totalMutuBaru / sksLama;
+            const totalDiff = ipkBaru - ipkLama;
 
             resIpk.textContent = ipkBaru.toFixed(2);
-            resSks.textContent = `${totalSksBaru} (${totalSksKumulatif})`;
 
-            if (Math.abs(diff) < 0.001) {
+            if (totalDiff <= 0.0001) {
                 resBadge.className = 'badge-diff';
-                resBadge.innerHTML = `<span>IPK Tetap (${ipkBaru.toFixed(2)})</span>`;
+                resBadge.innerHTML = `<span>IPK Tetap (${ipkLama.toFixed(2)})</span>`;
                 resCard.className = 'card results-card';
-            } else if (diff > 0) {
+            } else {
                 resBadge.className = 'badge-diff up';
                 resBadge.innerHTML = `
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
                         <polyline points="18 15 12 9 6 15"/>
                     </svg>
-                    <span>Naik +${diff.toFixed(2)} dari ${ipkLama.toFixed(2)}</span>
+                    <span>Naik +${totalDiff.toFixed(2)} dari ${ipkLama.toFixed(2)}</span>
                 `;
                 resCard.className = 'card results-card up';
+            }
+
+            // Sort courses by efficiency descending
+            const validGainCourses = analyzedCourses.filter(c => c.isValidGain);
+            validGainCourses.sort((a, b) => b.efficiency - a.efficiency);
+
+            if (validGainCourses.length === 0) {
+                recBox.className = 'recommendation-box empty';
+                recText.textContent = 'Belum ada mata kuliah yang berpotensi menaikkan IPK (target nilai harus lebih tinggi dari nilai lama).';
+                rankContainer.innerHTML = '<div class="empty-hint">Tidak ada kenaikan IPK yang terdeteksi.</div>';
             } else {
-                resBadge.className = 'badge-diff down';
-                resBadge.innerHTML = `
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                        <polyline points="6 9 12 15 18 9"/>
-                    </svg>
-                    <span>Turun ${diff.toFixed(2)} dari ${ipkLama.toFixed(2)}</span>
-                `;
-                resCard.className = 'card results-card down';
+                const topCourse = validGainCourses[0];
+                recBox.className = 'recommendation-box';
+                recText.innerHTML = `Prioritaskan mengulang <strong>${escapeHtml(topCourse.name)}</strong> lebih dulu (${topCourse.sks} SKS). Potensi naik <strong>+${topCourse.ipkGain.toFixed(2)} poin</strong> IPK — rasio kenaikan tertinggi per SKS.`;
+
+                rankContainer.innerHTML = validGainCourses.map((item, index) => `
+                    <div class="rank-item">
+                        <div class="item-left">
+                            <span class="item-title">#${index + 1} ${escapeHtml(item.name)}</span>
+                            <span class="item-sub">${item.sks} SKS • Nilai: ${item.oldGrade} → ${item.targetGradeEffective}</span>
+                        </div>
+                        <div class="item-right">
+                            <div class="item-gain">+${item.ipkGain.toFixed(2)} IPK</div>
+                            <div class="item-eff">${(item.efficiency * 100).toFixed(2)} / SKS</div>
+                        </div>
+                    </div>
+                `).join('');
             }
         }
 
@@ -949,7 +1340,7 @@
                 resCard.className = 'card results-card down';
                 adviceBox.className = 'target-advice-box danger';
                 adviceText.innerHTML = `
-                    <strong>Target tidak mungkin dicapai semester ini.</strong><br>
+                    <strong>Target tidak bisa dicapai semester ini.</strong><br>
                     Meskipun kamu meraih IP <strong>4.00</strong> sempurna semester ini, IPK maksimal yang masih bisa dicapai adalah <strong>${maxIpkPossible.toFixed(2)}</strong>.
                 `;
             } else if (ipMin <= 0) {
@@ -960,7 +1351,7 @@
                 adviceBox.className = 'target-advice-box success';
                 adviceText.innerHTML = `
                     <strong>Target sudah aman!</strong><br>
-                    IPK kamu saat ini (<strong>${ipkLama.toFixed(2)}</strong>) sudah memenuhi target (<strong>${ipkTarget.toFixed(2)}</strong>). Nilai semester ini hanya perlu dijaga agar tidak turun drastis.
+                    IPK kamu saat ini (<strong>${ipkLama.toFixed(2)}</strong>) sudah memenuhi target (<strong>${ipkTarget.toFixed(2)}</strong>). Jaga performa agar tidak turun drastis.
                 `;
             } else {
                 resIpMin.textContent = ipMin.toFixed(2);
@@ -971,15 +1362,15 @@
 
                 let gradeAdvice = "";
                 if (ipMin > 3.75) {
-                    gradeAdvice = "Rata-rata nilai mata kuliah semester ini wajib didominasi nilai <strong>A (4.0)</strong>.";
+                    gradeAdvice = "Rata-rata nilai semester ini wajib didominasi <strong>A (4.0)</strong>.";
                 } else if (ipMin > 3.25) {
-                    gradeAdvice = "Rata-rata nilai mata kuliah semester ini harus di atas <strong>AB / B+ (3.5)</strong>.";
+                    gradeAdvice = "Rata-rata nilai semester ini harus di atas <strong>AB / B+ (3.5)</strong>.";
                 } else if (ipMin > 2.75) {
-                    gradeAdvice = "Rata-rata nilai mata kuliah semester meperlukan minimal <strong>B (3.0)</strong>.";
+                    gradeAdvice = "Rata-rata nilai semester ini memerlukan minimal <strong>B (3.0)</strong>.";
                 } else if (ipMin > 2.25) {
-                    gradeAdvice = "Rata-rata nilai semester ini minimal harus di atas <strong>BC / C+ (2.5)</strong>.";
+                    gradeAdvice = "Rata-rata nilai semester ini minimal di atas <strong>BC / C+ (2.5)</strong>.";
                 } else {
-                    gradeAdvice = "Kamu hanya perlu menjaga agar tidak ada nilai E atau D.";
+                    gradeAdvice = "Jaga agar tidak ada nilai E atau D.";
                 }
 
                 adviceText.innerHTML = `
@@ -988,24 +1379,91 @@
             }
         }
 
+        function calculatePartial() {
+            const ipkLama = validateInput('p_ipkLama', 'p_ipkLama_err', 0, 4);
+            const sksLama = validateInput('p_sksLama', 'p_sksLama_err', 1);
+
+            const resIpk = document.getElementById('p_resIpk');
+            const resIps = document.getElementById('p_resIps');
+            const resSks = document.getElementById('p_resSks');
+            const resBadge = document.getElementById('p_resBadge');
+            const resCard = document.getElementById('p_resultCard');
+
+            let totalSksBaru = 0;
+            let totalBobotBaru = 0;
+
+            partialCourses.forEach(c => {
+                if (c.sks && c.sks > 0) {
+                    totalSksBaru += c.sks;
+                    totalBobotBaru += (c.sks * c.grade);
+                }
+            });
+
+            if (totalSksBaru === 0) {
+                resIps.textContent = '--';
+                resSks.textContent = '--';
+            } else {
+                const ips = totalBobotBaru / totalSksBaru;
+                resIps.textContent = ips.toFixed(2);
+                resSks.textContent = totalSksBaru;
+            }
+
+            if (ipkLama === null || sksLama === null || totalSksBaru === 0) {
+                resIpk.textContent = '0.00';
+                resBadge.className = 'badge-diff';
+                resBadge.innerHTML = '<span>Isi data matkul</span>';
+                resCard.className = 'card results-card';
+                return;
+            }
+
+            const totalSksKumulatif = sksLama + totalSksBaru;
+            const ipkBaru = ((ipkLama * sksLama) + totalBobotBaru) / totalSksKumulatif;
+            const diff = ipkBaru - ipkLama;
+
+            resIpk.textContent = ipkBaru.toFixed(2);
+
+            if (Math.abs(diff) < 0.001) {
+                resBadge.className = 'badge-diff';
+                resBadge.innerHTML = `<span>IPK Tetap (${ipkBaru.toFixed(2)})</span>`;
+                resCard.className = 'card results-card';
+            } else if (diff > 0) {
+                resBadge.className = 'badge-diff up';
+                resBadge.innerHTML = `
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                        <polyline points="18 15 12 9 6 15"/>
+                    </svg>
+                    <span>Naik +${diff.toFixed(2)} dari ${ipkLama.toFixed(2)}</span>
+                `;
+                resCard.className = 'card results-card up';
+            } else {
+                resBadge.className = 'badge-diff down';
+                resBadge.innerHTML = `
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                        <polyline points="6 9 12 15 18 9"/>
+                    </svg>
+                    <span>Turun ${diff.toFixed(2)} dari ${ipkLama.toFixed(2)}</span>
+                `;
+                resCard.className = 'card results-card down';
+            }
+        }
+
         function copySummary(mode) {
             let summaryText = "";
 
-            if (mode === 'hitung') {
-                const ipkLama = document.getElementById('h_ipkLama').value || '-';
-                const sksLama = document.getElementById('h_sksLama').value || '-';
-                const ipkBaru = document.getElementById('h_resIpk').textContent;
-                const ips = document.getElementById('h_resIps').textContent;
-                const totalSks = document.getElementById('h_resSks').textContent;
-                const badge = document.getElementById('h_resBadge').innerText.replace(/\n+/g, ' ');
+            if (mode === 'retake') {
+                const ipkLama = document.getElementById('r_ipkLama').value || '-';
+                const sksLama = document.getElementById('r_sksLama').value || '-';
+                const ipkBaru = document.getElementById('r_resIpk').textContent;
+                const badge = document.getElementById('r_resBadge').innerText.replace(/\s+/g, ' ');
+                const rec = document.getElementById('r_recText').innerText.replace(/\s+/g, ' ');
 
-                if (ipkBaru === '0.00' || ips === '--') {
-                    showToast('Isi data akademik terlebih dahulu!');
+                if (ipkBaru === '0.00') {
+                    showToast('Isi data mengulang terlebih dahulu!');
                     return;
                 }
 
-                summaryText = `📊 SIMULASI IPK (HITUNG IPK)\n----------------------------\n• IPK Sebelum : ${ipkLama} (${sksLama} SKS)\n• IP Semester Ini : ${ips}\n• IPK Baru : ${ipkBaru}\n• SKS Baru : ${totalSks}\n• Status : ${badge}\n----------------------------\nDihitung via Simulasi IPK`;
-            } else {
+                summaryText = `📊 STRATEGI MENGULANG MATKUL\n----------------------------\n• IPK Sekarang : ${ipkLama} (${sksLama} SKS)\n• IPK Proyeksi : ${ipkBaru}\n• Status : ${badge}\n• Rekomendasi : ${rec}\n----------------------------\nDihitung via Simulasi IPK`;
+            } else if (mode === 'target') {
                 const ipkLama = document.getElementById('t_ipkLama').value || '-';
                 const sksLama = document.getElementById('t_sksLama').value || '-';
                 const sksBaru = document.getElementById('t_sksBaru').value || '-';
@@ -1018,7 +1476,20 @@
                     return;
                 }
 
-                summaryText = `🎯 SIMULASI IPK (TARGET IPK)\n----------------------------\n• IPK saat ini : ${ipkLama} (${sksLama} SKS)\n• SKS Semester Ini : ${sksBaru} SKS\n• Target IPK : ${target}\n• Minimal IP Semester : ${minIp}\n• Catatan : ${advice}\n----------------------------\nDihitung via Simulasi IPK`;
+                summaryText = `🎯 TARGET IPK AKADEMIK\n----------------------------\n• IPK Saat Ini : ${ipkLama} (${sksLama} SKS)\n• SKS Baru : ${sksBaru} SKS\n• Target IPK : ${target}\n• Minimal IP Semester : ${minIp}\n• Catatan : ${advice}\n----------------------------\nDihitung via Simulasi IPK`;
+            } else {
+                const ipkLama = document.getElementById('p_ipkLama').value || '-';
+                const sksLama = document.getElementById('p_sksLama').value || '-';
+                const ipkBaru = document.getElementById('p_resIpk').textContent;
+                const ips = document.getElementById('p_resIps').textContent;
+                const totalSks = document.getElementById('p_resSks').textContent;
+
+                if (ipkBaru === '0.00') {
+                    showToast('Isi data parsial terlebih dahulu!');
+                    return;
+                }
+
+                summaryText = `📈 ESTIMASI PARSIAL SEMESTER\n----------------------------\n• IPK Lalu : ${ipkLama} (${sksLama} SKS)\n• IP Semester : ${ips} (${totalSks} SKS)\n• Proyeksi IPK Baru : ${ipkBaru}\n----------------------------\nDihitung via Simulasi IPK`;
             }
 
             const tempInput = document.createElement('textarea');
